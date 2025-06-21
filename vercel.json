@@ -4,8 +4,6 @@
     { "src": "server.js", "use": "@vercel/node" }
   ],
   "routes": [
-    { "src": "/api/aksara", "dest": "api/aksaraRoutes.js" },
-    { "src": "/api/categories", "dest": "api/categoryRoutes.js" },
-    { "src": "/api/stats", "dest": "api/statsRoutes.js" }
+    { "src": "/(.*)", "dest": "server.js" }
   ]
 }
