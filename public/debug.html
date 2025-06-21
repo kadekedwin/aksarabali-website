@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Debug Aksara Bali</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            background: #f5f5f5;
+        }
+        
+        .debug-panel {
+            background: white;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            padding: 20px;
+            margin: 20px 0;
+        }
+        
+        .test-btn {
+            padding: 10px 20px;
+            margin: 5px;
+            background: #007bff;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        
+        .test-btn:hover {
+            background: #0056b3;
+        }
+        
+        .result {
+            background: #f8f9fa;
+            border: 1px solid #dee2e6;
+            border-radius: 5px;
+            padding: 15px;
+            margin: 10px 0;
+            font-family: monospace;
+            white-space: pre-wrap;
+        }
+        
+        .error {
+            background: #f8d7da;
+            border-color: #f5c6cb;
+            color: #721c24;
+        }
+        
+        .success {
+            background: #d4edda;
+            border-color: #c3e6cb;
+            color: #155724;
+        }
+        
+        .info {
+            background: #d1ecf1;
+            border-color: #bee5eb;
+            color: #0c5460;
+        }
+    </style>
+</head>
+<body>
+    <h1>🔧 Debug Panel - Aksara Bali API</h1>
+    
+    <div class="debug-panel">
+        <h2>API Endpoint Tests</h2>
+        <button class="test-btn" onclick="testHealthCheck()">Test Health Check</button>
+        <button class="test-btn" onclick="testAksaraEndpoint()">Test Aksara Endpoint</button>
+        <button class="test-btn" onclick="testCategoriesEndpoint()">Test Categories</button>
+        <button class="test-btn" onclick="testSearchEndpoint()">Test Search</button>
+        <button class="test-btn" onclick="testDatabaseDirect()">Test Database Direct</button>
+        <button class="test-btn" onclick="clearResults()">Clear Results</button>
+    </div>
+    
+    <div id="results"></div>
+
+    <script>
+        let resultCount = 0;
+        
+        function addResult(title, data, type = 'info') {
+            resultCount++;
+            const results = document.getElementById('results');
+            const div = document.createElement('div');
+            div.className = `result ${type}`;
+            div.innerHTML = `
+                <strong>${resultCount}. ${title}</strong>
+                <hr>
+                ${typeof data === 'object' ? JSON.stringify(data, null, 2) : data}
+            `;
+            results.appendChild(div);
+            
+            // Auto scroll to bottom
+            div.scrollIntoView({ behavior: 'smooth' });
+        }
+        
+        async function testHealthCheck() {
+            try {
+                console.log('Testing health check...');
+                const response = await fetch('/api/health');
+                const data = await response.json();
+                
+                addResult('Health Check API', {
+                    status: response.status,
+                    statusText: response.statusText,
+                    data: data
+                }, response.ok ? 'success' : 'error');
+                
+            } catch (error) {
+                addResult('Health Check API - ERROR', {
+                    error: error.message,
+                    stack: error.stack
+                }, 'error');
+            }
+        }
+        
+        async function testAksaraEndpoint() {
+            try {
+                console.log('Testing aksara endpoint...');
+                const response = await fetch('/api/aksara?limit=3');
+                const contentType = response.headers.get('content-type');
+                
+                addResult('Aksara Endpoint Response Info', {
+                    status: response.status,
+                    statusText: response.statusText,
+                    contentType: contentType,
+                    headers: Object.fromEntries(response.headers.entries())
+                }, 'info');
+                
+                if (contentType && contentType.includes('application/json')) {
+                    const data = await response.json();
+                    addResult('Aksara Endpoint Data', data, response.ok ? 'success' : 'error');
+                } else {
+                    const text = await response.text();
+                    addResult('Aksara Endpoint (Non-JSON Response)', text, 'error');
+                }
+                
+            } catch (error) {
+                addResult('Aksara Endpoint - ERROR', {
+                    error: error.message,
+                    stack: error.stack
+                }, 'error');
+            }
+        }
+        
+        async function testCategoriesEndpoint() {
+            try {
+                console.log('Testing categories endpoint...');
+                const response = await fetch('/api/categories');
+                const data = await response.json();
+                
+                addResult('Categories Endpoint', {
+                    status: response.status,
+                    data: data
+                }, response.ok ? 'success' : 'error');
+                
+            } catch (error) {
+                addResult('Categories Endpoint - ERROR', {
+                    error: error.message,
+                    stack: error.stack
+                }, 'error');
+            }
+        }
+        
+        async function testSearchEndpoint() {
+            try {
+                console.log('Testing search endpoint...');
+                const response = await fetch('/api/aksara/search?q=ka&limit=3');
+                const data = await response.json();
+                
+                addResult('Search Endpoint', {
+                    status: response.status,
+                    data: data
+                }, response.ok ? 'success' : 'error');
+                
+            } catch (error) {
+                addResult('Search Endpoint - ERROR', {
+                    error: error.message,
+                    stack: error.stack
+                }, 'error');
+            }
+        }
+        
+        async function testDatabaseDirect() {
+            try {
+                console.log('Testing database direct...');
+                const response = await fetch('/api/db-test');
+                const data = await response.json();
+                
+                addResult('Database Direct Test', {
+                    status: response.status,
+                    data: data
+                }, response.ok ? 'success' : 'error');
+                
+            } catch (error) {
+                addResult('Database Direct Test - ERROR', {
+                    error: error.message,
+                    stack: error.stack
+                }, 'error');
+            }
+        }
+        
+        function clearResults() {
+            document.getElementById('results').innerHTML = '';
+            resultCount = 0;
+        }
+        
+        // Auto test on load
+        window.addEventListener('load', async () => {
+            addResult('Auto Testing Started', 'Running automatic tests...', 'info');
+            
+            await new Promise(resolve => setTimeout(resolve, 500));
+            await testHealthCheck();
+            
+            await new Promise(resolve => setTimeout(resolve, 500));
+            await testDatabaseDirect();
+            
+            await new Promise(resolve => setTimeout(resolve, 500));
+            await testAksaraEndpoint();
+            
+            addResult('Auto Testing Completed', 'All automatic tests finished. Check results above.', 'info');
+        });
+    </script>
+</body>
+</html>
