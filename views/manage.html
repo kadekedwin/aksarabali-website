@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kelola Data Aksara Bali - Admin Panel</title>
+    <link rel="stylesheet" href="css/manage.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Aksara Bali Digital</h1>
+            <p class="subtitle">Kelola Data Aksara</p>
+            <p class="timestamp">2025-06-21 09:24:42</p>
+            <div class="nav-links">
+                <a href="/">Beranda</a>
+                <a href="/manage" class="active">Kelola Data</a>
+            </div>
+        </header>
+        
+        <div id="alertContainer" class="hidden"></div>
+        
+        <div class="controls-section">
+            <div class="search-container">
+                <input type="text" class="search-box" id="searchInput" placeholder="Cari aksara berdasarkan nama atau kategori...">
+                <button class="btn btn-primary" id="searchBtn">Cari</button>
+            </div>
+            
+            <div class="filter-container">
+                <select class="category-filter" id="categoryFilter">
+                    <option value="">Semua Kategori</option>
+                    <option value="Aksara Wianjana">Aksara Wianjana</option>
+                    <option value="Gantungan">Gantungan</option>
+                    <option value="Gempelan">Gempelan</option>
+                    <option value="Aksara Swalalita">Aksara Swalalita</option>
+                    <option value="Pengangge Aksara">Pengangge Suara</option>
+                    <option value="Pengangge Tengenan">Pengangge Tengenan</option>
+                    <option value="Aksara Suara">Aksara Suara</option>
+                    <option value="Angka Bali">Angka Bali</option>
+                    <option value="Lainnya">Lainnya</option>
+                </select>
+                <button class="btn" id="resetBtn">Reset</button>
+                <button class="btn btn-success" id="addNewBtn">Tambah Baru</button>
+            </div>
+        </div>
+        
+        <div class="stats-section">
+            <h2 class="table-title">Statistik Database</h2>
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-number" id="totalAksara">0</div>
+                    <div class="stat-label">Total Aksara</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number" id="activeAksara">0</div>
+                    <div class="stat-label">Aksara Aktif</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number" id="categoriesCount">0</div>
+                    <div class="stat-label">Kategori</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number" id="has3dModels">0</div>
+                    <div class="stat-label">Model 3D</div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="table-container">
+            <div class="table-title">
+                Daftar Aksara Bali
+                <div>
+                    <button class="btn btn-sm" id="exportBtn">Export Data</button>
+                    <button class="btn btn-sm btn-primary" id="refreshBtn">Refresh</button>
+                </div>
+            </div>
+            
+            <div id="loadingState" class="loading hidden">
+                <div class="loading-spinner"></div>
+                <div class="loading-text">Memuat Data</div>
+                <div class="loading-subtext">Mohon tunggu sebentar</div>
+            </div>
+            
+            <div id="emptyState" class="empty-state hidden">
+                <div class="empty-state-icon">📜</div>
+                <h3>Tidak ada data ditemukan</h3>
+                <p id="emptyMessage">Coba ubah filter pencarian atau tambahkan aksara baru</p>
+            </div>
+            
+            <table class="data-table" id="aksaraTable">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Aksara</th>
+                        <th>Nama</th>
+                        <th>Latin</th>
+                        <th>Kategori</th>
+                        <th>Terakhir Diperbarui</th>
+                        <th>Aksi</th>
+                    </tr>
+                </thead>
+                <tbody id="aksaraTableBody"></tbody>
+            </table>
+            
+            <div class="pagination" id="pagination"></div>
+        </div>
+    </div>
+    
+    <div id="editModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title">Edit Aksara</h3>
+                <span class="close">&times;</span>
+            </div>
+            <form id="editForm">
+                <input type="hidden" id="editId" name="id">
+                <div class="form-row">
+                    <div class="form-group">
+                        <label class="form-label" for="editAksaraBali">Aksara Bali</label>
+                        <input type="text" class="form-control" id="editAksaraBali" name="aksara_bali" placeholder="Masukkan aksara Bali" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label" for="editNama">Nama Aksara</label>
+                        <input type="text" class="form-control" id="editNama" name="nama" placeholder="Nama aksara" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label" for="editLatin">Transliterasi Latin</label>
+                        <input type="text" class="form-control" id="editLatin" name="latin" placeholder="Transliterasi dalam huruf latin" required>
+                    </div>
+                </div>
+                
+                <div class="form-row">
+                    <div class="form-group">
+                        <label class="form-label" for="editKategori">Kategori</label>
+                        <select class="form-control" id="editKategori" name="kategori" required>
+                            <option value="">Semua Kategori</option>
+                            <option value="Aksara Wianjana">Aksara Wianjana</option>
+                            <option value="Gantungan">Gantungan</option>
+                            <option value="Gempelan">Gempelan</option>
+                            <option value="Aksara Swalalita">Aksara Swalalita</option>
+                            <option value="Pengangge Aksara">Pengangge Suara</option>
+                            <option value="Pengangge Tengenan">Pengangge Tengenan</option>
+                            <option value="Aksara Suara">Aksara Suara</option>
+                            <option value="Angka Bali">Angka Bali</option>
+                            <option value="Lainnya">Lainnya</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label" for="editUnicodeAksara">Unicode</label>
+                        <input type="text" class="form-control" id="editUnicodeAksara" name="unicode_aksara" placeholder="Unicode aksara (opsional)">
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label" for="editContohPenggunaan">Contoh Penggunaan</label>
+                    <input type="text" class="form-control" id="editContohPenggunaan" name="contoh_penggunaan" placeholder="Contoh penggunaan aksara">
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label" for="editDeskripsi">Deskripsi</label>
+                    <textarea class="form-control" id="editDeskripsi" name="deskripsi" placeholder="Deskripsi mengenai aksara ini"></textarea>
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label">Model 3D</label>
+                    <div style="display: flex; gap: 15px; align-items: center;">
+                        <span id="modelStatus" style="color: #999;">Tidak ada model 3D</span>
+                        <button type="button" class="btn btn-sm" id="viewModelBtn">Lihat Model</button>
+                        <button type="button" class="btn btn-sm btn-warning" id="toggleModelUploadBtn">Ganti Model</button>
+                    </div>
+                    <div class="model-upload-zone" id="modelUploadZone">
+                        <input type="file" id="modelFileInput" accept=".obj">
+                        <p>Klik atau jatuhkan file 3D model (.obj) di sini</p>
+                    </div>
+                </div>
+                
+                <div class="btn-group">
+                    <button type="submit" class="btn btn-primary" id="saveBtn">Simpan Perubahan</button>
+                    <button type="button" class="btn" id="cancelEditBtn">Batal</button>
+                </div>
+            </form>
+        </div>
+    </div>
+    
+    <div id="deleteModal" class="modal">
+        <div class="modal-content" style="max-width: 500px;">
+            <div class="modal-header">
+                <h3 class="modal-title">Konfirmasi Hapus</h3>
+                <span class="close">&times;</span>
+            </div>
+            <div style="padding: 20px 0;">
+                <p>Apakah Anda yakin ingin menghapus aksara ini?</p>
+                <p style="margin-top: 15px; font-weight: 600;">
+                    <span id="deleteAksaraChar" style="font-size: 2rem; margin-right: 10px;"></span>
+                    <span id="deleteAksaraName"></span>
+                </p>
+                <p style="margin-top: 15px; color: #f87171;">
+                    Tindakan ini tidak dapat dibatalkan.
+                </p>
+            </div>
+            <div class="btn-group">
+                <button type="button" class="btn btn-danger" id="confirmDeleteBtn">Ya, Hapus</button>
+                <button type="button" class="btn" id="cancelDeleteBtn">Batal</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="js/manage.js"></script>
+</body>
+</html>

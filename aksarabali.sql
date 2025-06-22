@@ -1,4 +1,6 @@
-CREATE DATABASE aksarabali CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+CREATE DATABASE aksarabali 
+CHARACTER SET utf8mb4 
+COLLATE utf8mb4_unicode_ci;
 USE aksarabali;
 
 CREATE TABLE aksara_bali (
@@ -118,6 +120,8 @@ VALUES
     ('Pitu', '᭗', 'Angka Bali', '7', 'U+1B57', '', 'Angka tujuh'),
     ('Kutus', '᭘', 'Angka Bali', '8', 'U+1B58', '', 'Angka delapan'),
     ('Sia', '᭙', 'Angka Bali', '9', 'U+1B59', '', 'Angka sembilan');
+
+
 
 DROP DATABASE aksarabali;
 DROP TABLE aksara_bali;

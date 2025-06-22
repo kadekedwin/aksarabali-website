@@ -22,7 +22,7 @@ app.use((req, res, next) => {
 
 const storage = multer.diskStorage({
     destination: (req, file, cb) => {
-        const uploadDir = path.join(__dirname, 'public/3d');
+        const uploadDir = path.join(__dirname, '3d');
         if (!fs.existsSync(uploadDir)) fs.mkdirSync(uploadDir, { recursive: true });
         cb(null, uploadDir);
     },
@@ -40,7 +40,6 @@ const upload = multer({
 });
 
 app.use('/api/aksara', aksaraRoutes);
-
 app.get('/api/health', async (req, res) => {
     try {
         const connection = db.getConnection();
@@ -61,30 +60,6 @@ app.get('/api/health', async (req, res) => {
         });
     }
 });
-
-app.get('/api/categories', async (req, res) => {
-    try {
-        const connection = db.getConnection();
-        if (!connection) await db.connectDB();
-        
-        const [rows] = await connection.query(
-            'SELECT DISTINCT kategori FROM aksara_bali WHERE kategori IS NOT NULL ORDER BY kategori'
-        );
-
-        res.json({
-            success: true,
-            message: 'Categories retrieved successfully',
-            data: rows.map(row => row.kategori)
-        });
-    } catch (error) {
-        res.status(500).json({
-            success: false,
-            message: 'Failed to retrieve categories',
-            error: error.message
-        });
-    }
-});
-
 app.get('/api/stats', async (req, res) => {
     try {
         const connection = db.getConnection();
@@ -107,7 +82,7 @@ app.get('/api/stats', async (req, res) => {
         `);
 
         let modelsCount = 0;
-        const modelsDir = path.join(__dirname, 'public/3d');
+        const modelsDir = path.join(__dirname, '3d');
         if (fs.existsSync(modelsDir)) {
             const files = fs.readdirSync(modelsDir);
             modelsCount = files.filter(file => file.endsWith('.obj')).length;
@@ -132,7 +107,6 @@ app.get('/api/stats', async (req, res) => {
         });
     }
 });
-
 app.get('/api/random', async (req, res) => {
     try {
         const connection = db.getConnection();
@@ -154,51 +128,6 @@ app.get('/api/random', async (req, res) => {
         });
     }
 });
-
-app.get('/api/db-test', async (req, res) => {
-    try {
-        const connection = db.getConnection();
-        if (!connection) {
-            return res.status(500).json({
-                success: false,
-                message: "Database connection not available"
-            });
-        }
-        
-        const [rows] = await connection.query('SELECT 1+1 as result');
-        const [versionResult] = await connection.query('SELECT version() as version');
-        const [dbCheckResult] = await connection.query('SHOW TABLES');
-        
-        // Get the database schema for aksara_bali table
-        const [tableSchema] = await connection.query(`
-            SELECT COLUMN_NAME, DATA_TYPE, IS_NULLABLE, COLUMN_KEY, COLUMN_DEFAULT
-            FROM INFORMATION_SCHEMA.COLUMNS
-            WHERE TABLE_SCHEMA = ? AND TABLE_NAME = 'aksara_bali'
-            ORDER BY ORDINAL_POSITION
-        `, [db.dbConfig.database]);
-        
-        res.json({
-            success: true,
-            message: 'Database connection test successful',
-            data: {
-                basicTest: rows[0].result,
-                mysqlVersion: versionResult[0].version,
-                tables: dbCheckResult.map(row => Object.values(row)[0]),
-                aksaraBaliSchema: tableSchema
-            },
-            timestamp: new Date().toISOString(),
-            user: 'kadekedwin'
-        });
-    } catch (error) {
-        res.status(500).json({
-            success: false,
-            message: 'Database test failed',
-            error: error.message,
-            stack: error.stack
-        });
-    }
-});
-
 app.get('/api', (req, res) => {
     res.json({
         success: true,
@@ -207,16 +136,15 @@ app.get('/api', (req, res) => {
         description: 'RESTful API for Balinese script data',
         endpoints: {
             'GET /api/health': 'Health check',
+            'GET /api/stats': 'Get database statistics',
+            'GET /api/random': 'Get random aksara',
             'GET /api/aksara': 'Get all aksara with pagination',
             'GET /api/aksara/search': 'Search aksara',
             'GET /api/aksara/:id': 'Get specific aksara by ID',
             'POST /api/aksara': 'Create a new aksara',
             'PUT /api/aksara/:id': 'Update an existing aksara',
             'DELETE /api/aksara/:id': 'Delete an aksara',
-            'POST /api/aksara/:id/model': 'Upload a 3D model for an aksara',
-            'GET /api/categories': 'Get all available categories',
-            'GET /api/stats': 'Get database statistics',
-            'GET /api/random': 'Get random aksara'
+            'POST /api/aksara/:id/model': 'Upload a 3D model for an aksara'
         },
         currentTime: '2025-06-21 09:06:50',
         user: 'kadekedwin'
@@ -224,19 +152,13 @@ app.get('/api', (req, res) => {
 });
 
 app.get('/', (req, res) => {
-    res.sendFile(path.join(__dirname, 'public', 'index.html'));
+    res.sendFile(path.join(__dirname, 'views', 'index.html'));
 });
-
-app.get('/debug', (req, res) => {
-    res.sendFile(path.join(__dirname, 'public', 'debug.html'));
-});
-
 app.get('/manage', (req, res) => {
-    res.sendFile(path.join(__dirname, 'public', 'manage.html'));
+    res.sendFile(path.join(__dirname, 'views', 'manage.html'));
 });
-
 app.get('/upload', (req, res) => {
-    res.sendFile(path.join(__dirname, 'public', 'upload.html'));
+    res.sendFile(path.join(__dirname, 'views', 'upload.html'));
 });
 
 app.use('/api/*', (req, res) => {
@@ -249,7 +171,12 @@ app.use('/api/*', (req, res) => {
 });
 
 app.use('*', (req, res) => {
-    res.status(404).sendFile(path.join(__dirname, 'public', 'index.html'));
+    res.status(404).json({
+        success: false,
+        message: 'Page not found',
+        requestedEndpoint: req.originalUrl,
+        availableEndpoints: 'GET / for Dashboard'
+    });
 });
 
 app.use((error, req, res, next) => {

@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Upload Aksara Bali - Admin Panel</title>
+    <link rel="stylesheet" href="css/upload.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Aksara Bali Digital</h1>
+            <p class="subtitle">Upload Panel</p>
+            <p class="timestamp" id="timestamp">Terakhir diperbarui: 21 Juni 2025, 09:52:10 UTC</p>
+            <div class="nav-links">
+                <a href="/">Beranda</a>
+                <a href="/manage">Kelola Data</a>
+            </div>
+        </header>
+        
+        <div id="alertContainer" class="hidden"></div>
+        
+        <div class="form-section">
+            <h2 class="form-title">Upload Aksara Baru</h2>
+            
+            <form id="uploadForm">
+                <div class="form-row">
+                    <div class="form-group">
+                        <label class="form-label" for="aksaraBali">Aksara Bali</label>
+                        <input type="text" class="form-control" id="aksaraBali" name="aksara_bali" placeholder="Masukkan aksara Bali" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label" for="nama">Nama Aksara</label>
+                        <input type="text" class="form-control" id="nama" name="nama" placeholder="Nama aksara" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label" for="latin">Transliterasi Latin</label>
+                        <input type="text" class="form-control" id="latin" name="latin" placeholder="Transliterasi dalam huruf latin" required>
+                    </div>
+                </div>
+                
+                <div class="form-row">
+                    <div class="form-group">
+                        <label class="form-label" for="kategori">Kategori</label>
+                        <select class="form-control" id="kategori" name="kategori" required>
+                            <option value="">Semua Kategori</option>
+                            <option value="Aksara Wianjana">Aksara Wianjana</option>
+                            <option value="Gantungan">Gantungan</option>
+                            <option value="Gempelan">Gempelan</option>
+                            <option value="Aksara Swalalita">Aksara Swalalita</option>
+                            <option value="Pengangge Aksara">Pengangge Suara</option>
+                            <option value="Pengangge Tengenan">Pengangge Tengenan</option>
+                            <option value="Aksara Suara">Aksara Suara</option>
+                            <option value="Angka Bali">Angka Bali</option>
+                            <option value="Lainnya">Lainnya</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label" for="unicodeAksara">Unicode</label>
+                        <input type="text" class="form-control" id="unicodeAksara" name="unicode_aksara" placeholder="Unicode aksara (opsional)">
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label" for="contohPenggunaan">Contoh Penggunaan</label>
+                    <input type="text" class="form-control" id="contohPenggunaan" name="contoh_penggunaan" placeholder="Contoh penggunaan aksara">
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label" for="deskripsi">Deskripsi</label>
+                    <textarea class="form-control" id="deskripsi" name="deskripsi" placeholder="Deskripsi mengenai aksara ini"></textarea>
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label" for="modelFile">Model 3D (OBJ)</label>
+                    <div class="file-upload">
+                        <input type="file" class="file-input" id="modelFile" name="model_file" accept=".obj">
+                        <div class="file-label">
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M11 14.9861C11 15.5384 11.4477 15.9861 12 15.9861C12.5523 15.9861 13 15.5384 13 14.9861V7.82831L16.2428 11.0711C16.6333 11.4616 17.2665 11.4616 17.657 11.0711C18.0475 10.6806 18.0475 10.0474 17.657 9.65692L12.7071 4.70703C12.3166 4.31651 11.6834 4.31651 11.2929 4.70703L6.34315 9.65692C5.95263 10.0474 5.95263 10.6806 6.34315 11.0711C6.73368 11.4616 7.36684 11.4616 7.75736 11.0711L11 7.82831V14.9861Z" fill="currentColor"/>
+                                <path d="M4 14H6V18H18V14H20V18C20 19.1046 19.1046 20 18 20H6C4.89543 20 4 19.1046 4 18V14Z" fill="currentColor"/>
+                            </svg>
+                            <span id="fileNameLabel">Pilih file model 3D</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="btn-group">
+                    <button type="submit" class="btn btn-primary" id="submitBtn">Upload Aksara</button>
+                    <button type="button" class="btn" id="previewBtn">Preview</button>
+                    <button type="reset" class="btn btn-danger" id="resetBtn">Reset</button>
+                </div>
+            </form>
+        </div>
+        
+        <div class="preview-section hidden" id="previewSection">
+            <div class="preview-title">
+                Preview Aksara
+                <button class="btn" id="closePreviewBtn">Tutup</button>
+            </div>
+            
+            <div class="preview-container">
+                <div class="aksara-preview">
+                    <div class="aksara-char" id="previewChar"></div>
+                    <div class="aksara-name" id="previewName"></div>
+                </div>
+                
+                <div class="aksara-details">
+                    <div class="detail-row">
+                        <div class="detail-label">Latin</div>
+                        <div class="detail-value" id="previewLatin"></div>
+                    </div>
+                    <div class="detail-row">
+                        <div class="detail-label">Kategori</div>
+                        <div class="detail-value" id="previewKategori"></div>
+                    </div>
+                    <div class="detail-row">
+                        <div class="detail-label">Unicode</div>
+                        <div class="detail-value" id="previewUnicode"></div>
+                    </div>
+                    <div class="detail-row">
+                        <div class="detail-label">Contoh</div>
+                        <div class="detail-value" id="previewContoh"></div>
+                    </div>
+                    <div class="detail-row">
+                        <div class="detail-label">Deskripsi</div>
+                        <div class="detail-value" id="previewDeskripsi"></div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="model-preview" id="modelPreview">
+                <div class="model-not-available" id="modelNotAvailable">
+                    <p>Model 3D belum dipilih</p>
+                    <p style="font-size: 0.8rem; margin-top: 10px; color: #555;">Format yang didukung: OBJ</p>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <script src="js/upload.js"></script>
+</body>
+</html>

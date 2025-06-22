@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Aksara Bali Digital</title>
+    <link rel="stylesheet" href="css/index.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Aksara Bali Digital</h1>
+            <p class="subtitle">Aksara Bali Dataset dan 3D Preview</p>
+            <p class="description">
+                Koleksi dataset Aksara Bali dalam dan bentuk 3D Preview
+            </p>
+            <p class="timestamp">2025-06-21 10:01:48 UTC</p>
+            <div class="nav-links">
+                <a href="/" class="active">Beranda</a>
+                <a href="/manage">Kelola Data</a>
+            </div>
+        </header>
+        
+        <div class="controls-section">
+            <div class="search-container">
+                <input type="text" class="search-box" id="searchInput" placeholder="Cari aksara Bali...">
+                <button class="btn btn-primary" id="searchBtn">Cari</button>
+            </div>
+            
+            <div class="filter-container">
+                <select class="category-filter" id="categoryFilter">
+                    <option value="">Semua Kategori</option>
+                </select>
+                <button class="btn" id="resetBtn">Reset</button>
+            </div>
+        </div>
+        
+        <div class="stats-bar" id="statsBar">
+            <div class="stat-item">
+                <div class="stat-number" id="totalAksara">-</div>
+                <div class="stat-label">Total Aksara</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-number" id="currentPage">-</div>
+                <div class="stat-label">Halaman</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-number" id="totalPages">-</div>
+                <div class="stat-label">Total Halaman</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-number" id="currentCategory">Semua</div>
+                <div class="stat-label">Kategori</div>
+            </div>
+        </div>
+        
+        <div class="main-content">
+            <div class="aksara-section">
+                <div class="pagination hidden" id="paginationTop"></div>
+                
+                <div id="loadingState" class="loading">
+                    <div class="loading-spinner"></div>
+                    <div class="loading-text">Memuat Aksara Bali</div>
+                    <div class="loading-subtext">Mengambil data dari server</div>
+                </div>
+                
+                <div id="emptyState" class="empty-state hidden">
+                    <div class="empty-state-icon">📜</div>
+                    <h3>Tidak ada data ditemukan</h3>
+                    <p id="emptyMessage">Coba ubah kata kunci pencarian atau filter kategori</p>
+                </div>
+                
+                <div class="aksara-grid hidden" id="aksaraGrid"></div>
+                
+                <div class="pagination hidden" id="paginationBottom"></div>
+            </div>
+        </div>
+    </div>
+
+    <div id="aksaraModal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <div class="modal-header">
+                <div class="modal-char" id="modalChar"></div>
+                <h2 class="modal-name" id="modalName"></h2>
+            </div>
+            <div class="modal-details" id="modalDetails"></div>
+        </div>
+    </div>
+
+    <div id="modal3D" class="modal-3d">
+        <div class="modal-3d-content">
+            <div class="modal-3d-header">
+                <div>
+                    <div class="modal-3d-title" id="modal3DTitle">Aksara 3D</div>
+                    <div class="modal-3d-subtitle" id="modal3DSubtitle">Model 3D Aksara Bali</div>
+                </div>
+                <span class="close-3d">&times;</span>
+            </div>
+            <div class="modal-3d-body">
+                <div class="three-container" id="threeContainer">
+                    <div class="three-loading" id="threeLoading">
+                        <div class="three-loading-spinner"></div>
+                        <div>Memuat model 3D...</div>
+                    </div>
+                    <div class="three-error hidden" id="threeError">
+                        <div>❌ Gagal memuat model 3D</div>
+                        <div style="font-size: 0.8rem; margin-top: 8px; color: #999;">
+                            Model mungkin tidak tersedia atau terjadi kesalahan
+                        </div>
+                    </div>
+                </div>
+                <div class="controls-panel">
+                    <button class="control-btn" id="resetCamera">Reset View</button>
+                    <button class="control-btn" id="autoRotate">Auto Rotate</button>
+                    <button class="control-btn" id="wireframe">Wireframe</button>
+                    <button class="control-btn" id="fullscreen">Fullscreen</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/loaders/OBJLoader.js"></script>
+    <script src="js/index.js"></script>
+</body>
+</html>
