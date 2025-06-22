@@ -8,7 +8,7 @@ const db = require('../config/database');
 
 const storage = multer.diskStorage({
     destination: (req, file, cb) => {
-        const uploadDir = path.join(__dirname, '../3d');
+        const uploadDir = path.join(__dirname, '../public/3d');
         if (!fsSync.existsSync(uploadDir)) fsSync.mkdirSync(uploadDir, { recursive: true });
         cb(null, uploadDir);
     },
@@ -66,7 +66,7 @@ router.get('/', async (req, res) => {
         // Check for 3D models availability - simplified
         for (const row of rows) {
             try {
-                const modelPath = path.join(__dirname, '../3d', `${row.nama}.obj`);
+                const modelPath = path.join(__dirname, '../public/3d', `${row.nama}.obj`);
                 row.has_model = await fileExists(modelPath);
             } catch {
                 row.has_model = false;
@@ -151,7 +151,7 @@ router.get('/search', async (req, res) => {
         // Add 3D model info
         for (const row of rows) {
             try {
-                const modelPath = path.join(__dirname, '../3d', `${row.nama}.obj`);
+                const modelPath = path.join(__dirname, '../public/3d', `${row.nama}.obj`);
                 row.has_model = await fileExists(modelPath);
             } catch {
                 row.has_model = false;
@@ -199,7 +199,7 @@ router.get('/:id', async (req, res) => {
         const aksara = rows[0];
         
         try {
-            const modelPath = path.join(__dirname, '../3d', `${aksara.nama}.obj`);
+            const modelPath = path.join(__dirname, '../public/3d', `${aksara.nama}.obj`);
             aksara.has_model = await fileExists(modelPath);
         } catch {
             aksara.has_model = false;
@@ -299,8 +299,8 @@ router.put('/:id', async (req, res) => {
         `, [nama, aksara_bali, kategori, latin, unicode_aksara || '', contoh_penggunaan, deskripsi, id]);
 
         if (nama !== oldNama) {
-            const oldPath = path.join(__dirname, '../3d', `${oldNama}.obj`);
-            const newPath = path.join(__dirname, '../3d', `${nama}.obj`);
+            const oldPath = path.join(__dirname, '../public/3d', `${oldNama}.obj`);
+            const newPath = path.join(__dirname, '../public/3d', `${nama}.obj`);
             
             try {
                 if (await fileExists(oldPath)) {
@@ -347,7 +347,7 @@ router.post('/:id/model', async (req, res) => {
         // Create a custom upload middleware with the filename based on aksara name
         const aksaraStorage = multer.diskStorage({
             destination: (req, file, cb) => {
-                const uploadDir = path.join(__dirname, '../3d');
+                const uploadDir = path.join(__dirname, '../public/3d');
                 if (!fsSync.existsSync(uploadDir)) fsSync.mkdirSync(uploadDir, { recursive: true });
                 cb(null, uploadDir);
             },
@@ -424,7 +424,7 @@ router.delete('/:id', async (req, res) => {
             });
         }
 
-        const modelPath = path.join(__dirname, '../3d', `${aksaraNama}.obj`);
+        const modelPath = path.join(__dirname, '../public/3d', `${aksaraNama}.obj`);
         
         try {
             if (await fileExists(modelPath)) {

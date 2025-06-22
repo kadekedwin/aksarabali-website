@@ -246,7 +246,7 @@ async function load3DModel(nama) {
         }
         
         const loader = new THREE.OBJLoader();
-        const modelPath = `/3d/${nama}.obj`;
+        const modelPath = `3d/${nama}.obj`;
         
         loader.load(
             modelPath,
