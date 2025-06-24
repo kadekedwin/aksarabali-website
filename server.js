@@ -40,6 +40,28 @@ const upload = multer({
 });
 
 app.use('/api/aksara', aksaraRoutes);
+app.get('/api/categories', async (req, res) => {
+    try {
+        const connection = db.getConnection();
+        if (!connection) await db.connectDB();
+        
+        const [rows] = await connection.query(
+            'SELECT DISTINCT kategori FROM aksara_bali WHERE kategori IS NOT NULL ORDER BY kategori'
+        );
+
+        res.json({
+            success: true,
+            message: 'Categories retrieved successfully',
+            data: rows.map(row => row.kategori)
+        });
+    } catch (error) {
+        res.status(500).json({
+            success: false,
+            message: 'Failed to retrieve categories',
+            error: error.message
+        });
+    }
+});
 app.get('/api/health', async (req, res) => {
     try {
         const connection = db.getConnection();
@@ -136,6 +158,7 @@ app.get('/api', (req, res) => {
         description: 'RESTful API for Balinese script data',
         endpoints: {
             'GET /api/health': 'Health check',
+            'GET /api/categories': 'Get categories',
             'GET /api/stats': 'Get database statistics',
             'GET /api/random': 'Get random aksara',
             'GET /api/aksara': 'Get all aksara with pagination',
