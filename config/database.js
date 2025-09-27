@@ -5,7 +5,7 @@ const dbConfig = {
     host: process.env.DB_HOST || 'localhost',
     user: process.env.DB_USER || 'root',
     password: process.env.DB_PASSWORD || '',
-    database: process.env.DB_NAME || 'aksarabali',
+    database: process.env.DB_NAME || 'aksarabali3d',
     port: process.env.DB_PORT || 3306,
     charset: 'utf8mb4'
 };
@@ -26,7 +26,7 @@ async function connectDB() {
         console.error('❌ Database connection failed:', error.message);
         
         if (error.code === 'ER_BAD_DB_ERROR') {
-            console.error('🔧 Please create database "aksarabali" first');
+            console.error('🔧 Please create database "aksarabali3d" first');
         }
         
         return false;

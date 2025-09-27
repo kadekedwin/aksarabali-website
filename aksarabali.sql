@@ -1,7 +1,7 @@
-CREATE DATABASE aksarabali 
+CREATE DATABASE aksarabali3d 
 CHARACTER SET utf8mb4 
 COLLATE utf8mb4_unicode_ci;
-USE aksarabali;
+USE aksarabali3d;
 
 CREATE TABLE aksara_bali (
     id INT PRIMARY KEY AUTO_INCREMENT,
@@ -123,6 +123,6 @@ VALUES
 
 
 
-DROP DATABASE aksarabali;
+DROP DATABASE aksarabali3d;
 DROP TABLE aksara_bali;
 DELETE FROM aksara_bali;

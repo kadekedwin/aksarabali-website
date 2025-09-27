@@ -9,7 +9,7 @@ async function testDatabase() {
         host: process.env.DB_HOST || 'localhost',
         user: process.env.DB_USER || 'root',
         password: process.env.DB_PASSWORD || '',
-        database: process.env.DB_NAME || 'aksarabali',
+        database: process.env.DB_NAME || 'aksarabali3d',
         port: process.env.DB_PORT || 3306,
         charset: 'utf8mb4'
     };
@@ -34,9 +34,9 @@ async function testDatabase() {
         // Check if our database exists
         const dbExists = databases.some(db => db.Database === dbConfig.database);
         if (!dbExists) {
-            console.log('❌ Database "aksarabali" does not exist!');
+            console.log('❌ Database "aksarabali3d" does not exist!');
             console.log('🔧 Please create it first:');
-            console.log('   CREATE DATABASE aksarabali CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;');
+            console.log('   CREATE DATABASE aksarabali3d CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;');
             await connection.end();
             return false;
         }
@@ -91,7 +91,7 @@ async function testDatabase() {
         console.error('🔧 Common solutions:');
         console.error('   1. Make sure MySQL server is running');
         console.error('   2. Check database credentials in .env file');
-        console.error('   3. Create database: CREATE DATABASE aksarabali;');
+        console.error('   3. Create database: CREATE DATABASE aksarabali3d;');
         console.error('   4. Check if user has proper permissions');
         return false;
     }
